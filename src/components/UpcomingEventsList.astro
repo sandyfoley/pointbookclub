@@ -1,0 +1,95 @@
+---
+import BookTitleLink from "@/components/BookTitleLink.astro";
+import { getBooks } from "@/lib/storage";
+import { formatDisplayTime, formatEventDate } from "@/lib/format";
+import type { EventRecord } from "@/lib/types";
+
+interface Props {
+  events: EventRecord[];
+  compact?: boolean;
+}
+
+const { events, compact = false } = Astro.props;
+const books = await getBooks();
+---
+
+<div class:list={["events-list", compact && "compact"]}>
+  {events.map((event) => (
+    <article class:list={["event-item", "card", event.category === "Book Club meeting" && "book-club-event"]}>
+      <div class="event-top">
+        <span class:list={["eyebrow", event.category === "Book Club meeting" && "book-club-eyebrow"]}>
+          {event.category}
+        </span>
+        <h3>
+          <a class="event-link" href={`/events/${event.id}`}>{event.name}</a>
+        </h3>
+      </div>
+      <p>{event.location}</p>
+      <p>{formatEventDate(event.date)}</p>
+      <p>{formatDisplayTime(event.startTime)}</p>
+      {event.bookTitle && <p class="event-book">Book: <BookTitleLink title={event.bookTitle} books={books} /></p>}
+      {!compact && <p set:html={event.description} />}
+    </article>
+  ))}
+</div>
+
+<style>
+  .events-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .event-item {
+    padding: 1.35rem;
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .event-top {
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .book-club-event {
+    background: linear-gradient(180deg, rgba(129, 46, 72, 0.16), rgba(255, 250, 244, 0.9));
+    border-color: rgba(129, 46, 72, 0.2);
+    box-shadow:
+      0 20px 50px rgba(29, 20, 16, 0.12),
+      inset 0 0 0 1px rgba(129, 46, 72, 0.08);
+  }
+
+  .book-club-eyebrow {
+    background: rgba(129, 46, 72, 0.14);
+    border-color: rgba(129, 46, 72, 0.18);
+    color: #6f1f3c;
+  }
+
+  .event-item h3 {
+    font-size: 1.5rem;
+  }
+
+  .event-link {
+    text-decoration: none;
+  }
+
+  .book-club-event .event-link {
+    color: #57142d;
+  }
+
+  .event-link:hover,
+  .event-link:focus-visible {
+    color: var(--accent-strong);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.14em;
+  }
+
+  .compact .event-item h3 {
+    font-size: 1.3rem;
+  }
+
+  .event-book {
+    color: var(--accent-strong);
+    font-weight: 700;
+  }
+</style>

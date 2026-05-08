@@ -1,0 +1,396 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildCalendarMonth, getAdjacentMonth, getMonthLabel, parseMonthParam } from "@/lib/calendar";
+import { formatDisplayTime, formatEventDate, formatShortDate } from "@/lib/format";
+import { getEvents } from "@/lib/storage";
+
+const monthValue = Astro.url.searchParams.get("month");
+const selectedMonth = parseMonthParam(monthValue);
+const events = await getEvents();
+const cells = buildCalendarMonth(selectedMonth, events);
+const monthLabel = getMonthLabel(selectedMonth);
+const prevMonth = getAdjacentMonth(selectedMonth, -1).toISOString().slice(0, 7);
+const nextMonth = getAdjacentMonth(selectedMonth, 1).toISOString().slice(0, 7);
+---
+
+<BaseLayout title="Calendar | Get to the Point Book Club">
+  <main class="container section">
+    <div class="calendar-shell card">
+      <div class="calendar-header">
+        <div>
+          <div class="eyebrow">Monthly view</div>
+          <h1>{monthLabel}</h1>
+        </div>
+        <div class="month-nav">
+          <a class="button-link" href={`/calendar?month=${prevMonth}`}>Previous</a>
+          <a class="button-link" href="/calendar">Today</a>
+          <a class="button-link button-primary" href={`/calendar?month=${nextMonth}`}>Next</a>
+        </div>
+      </div>
+
+      <div class="weekday-row">
+        <span>Sun</span>
+        <span>Mon</span>
+        <span>Tue</span>
+        <span>Wed</span>
+        <span>Thu</span>
+        <span>Fri</span>
+        <span>Sat</span>
+      </div>
+
+      <div class="calendar-grid">
+        {cells.map((cell) => (
+          <article
+            class:list={["day-cell", !cell.isCurrentMonth && "muted", cell.isToday && "today", cell.events.length > 0 && "has-events"]}
+            data-date-label={formatEventDate(cell.isoDate)}
+            data-events={JSON.stringify(cell.events)}
+          >
+            <header>
+              <span>{formatShortDate(cell.isoDate)}</span>
+              {cell.events.length > 0 && <span class="mobile-event-dot" aria-hidden="true"></span>}
+            </header>
+            <div class="day-events">
+              {cell.events.map((event) => (
+                <a
+                  class:list={["day-event", event.category === "Book Club meeting" && "book-club-event"]}
+                  href={`/events/${event.id}`}
+                >
+                  <strong>{event.name}</strong>
+                  <span>{formatDisplayTime(event.startTime)}</span>
+                </a>
+              ))}
+            </div>
+            {
+              cell.events.length > 0 && (
+                <button class="mobile-day-trigger" type="button" aria-label={`View events for ${formatEventDate(cell.isoDate)}`}>
+                  View day events
+                </button>
+              )
+            }
+          </article>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <dialog class="calendar-modal" data-calendar-modal>
+    <div class="calendar-modal-head">
+      <div>
+        <div class="eyebrow">Day events</div>
+        <h2 data-modal-date>Selected day</h2>
+      </div>
+      <button class="button-link" type="button" data-close-modal>Close</button>
+    </div>
+    <div class="calendar-modal-events" data-modal-events></div>
+  </dialog>
+</BaseLayout>
+
+<script is:inline>
+  // @ts-nocheck
+  const modal = document.querySelector("[data-calendar-modal]");
+  const modalDate = document.querySelector("[data-modal-date]");
+  const modalEvents = document.querySelector("[data-modal-events]");
+  const closeButton = document.querySelector("[data-close-modal]");
+  const triggers = document.querySelectorAll(".mobile-day-trigger");
+
+  const buildEventMarkup = (event) => {
+    const bookLine = event.bookTitle ? `<p class="modal-book">Book: ${event.bookTitle}</p>` : "";
+    const timeLine = event.endTime ? `${event.startTime} to ${event.endTime}` : event.startTime;
+    const roseClass = event.category === "Book Club meeting" ? " book-club-event" : "";
+
+    return `
+      <article class="modal-event${roseClass}">
+        <h3><a href="/events/${event.id}">${event.name}</a></h3>
+        <p>${event.location}</p>
+        <p>${timeLine}</p>
+        ${bookLine}
+        <div class="modal-description">${event.description}</div>
+      </article>
+    `;
+  };
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener("click", () => {
+      const cell = trigger.closest(".day-cell");
+      if (!cell || !(modal instanceof HTMLDialogElement) || !modalDate || !modalEvents) return;
+
+      const dateLabel = cell.getAttribute("data-date-label") || "Selected day";
+      const rawEvents = cell.getAttribute("data-events") || "[]";
+      const events = JSON.parse(rawEvents);
+
+      modalDate.textContent = dateLabel;
+      modalEvents.innerHTML = events.map(buildEventMarkup).join("");
+      modal.showModal();
+    });
+  });
+
+  closeButton?.addEventListener("click", () => {
+    if (modal instanceof HTMLDialogElement) {
+      modal.close();
+    }
+  });
+
+  modal?.addEventListener("click", (event) => {
+    if (event.target === modal && modal instanceof HTMLDialogElement) {
+      modal.close();
+    }
+  });
+</script>
+
+<style>
+  .calendar-shell {
+    padding: 1.5rem;
+    display: grid;
+    gap: 1.2rem;
+  }
+
+  .calendar-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .calendar-header h1 {
+    font-size: clamp(2.2rem, 3vw, 3.25rem);
+  }
+
+  .month-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .weekday-row,
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .weekday-row span {
+    padding: 0.5rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .day-cell {
+    min-height: 10rem;
+    border-radius: 24px;
+    padding: 0.85rem;
+    background: rgba(255, 255, 255, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    display: grid;
+    align-content: start;
+    gap: 0.8rem;
+  }
+
+  .day-cell header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .day-cell.muted {
+    opacity: 0.58;
+  }
+
+  .day-cell.today {
+    background: rgba(140, 90, 60, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(140, 90, 60, 0.16);
+  }
+
+  .day-events {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .mobile-event-dot,
+  .mobile-day-trigger {
+    display: none;
+  }
+
+  .day-event {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.6rem;
+    border-radius: 16px;
+    background: rgba(246, 234, 220, 0.8);
+    color: var(--ink);
+    font-size: 0.92rem;
+    text-decoration: none;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .day-event span {
+    color: var(--muted);
+  }
+
+  .day-event.book-club-event {
+    background: #edd0db;
+    border-left: 6px solid #7f2748;
+    color: #4c1028;
+    box-shadow:
+      inset 0 0 0 1px rgba(127, 39, 72, 0.18),
+      0 8px 18px rgba(127, 39, 72, 0.12);
+  }
+
+  .day-event.book-club-event strong {
+    color: #4c1028;
+  }
+
+  .day-event.book-club-event span {
+    color: #6f2441;
+  }
+
+  .day-event:hover,
+  .day-event:focus-visible {
+    background: rgba(140, 90, 60, 0.18);
+    color: var(--accent-strong);
+    transform: translateY(-1px);
+  }
+
+  .day-event.book-club-event:hover,
+  .day-event.book-club-event:focus-visible {
+    background: #dfb5c5;
+    border-left-color: #5e1732;
+    color: #3f0d21;
+  }
+
+  .day-event:hover span,
+  .day-event:focus-visible span {
+    color: var(--accent-strong);
+  }
+
+  .day-event.book-club-event:hover span,
+  .day-event.book-club-event:focus-visible span {
+    color: #5e1732;
+  }
+
+  .calendar-modal {
+    width: min(32rem, calc(100% - 1.5rem));
+    border: 0;
+    border-radius: 24px;
+    padding: 1.25rem;
+    background: #fffaf4;
+    box-shadow: 0 24px 60px rgba(29, 20, 16, 0.22);
+  }
+
+  .calendar-modal::backdrop {
+    background: rgba(21, 16, 13, 0.48);
+  }
+
+  .calendar-modal-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: start;
+    margin-bottom: 1rem;
+  }
+
+  .calendar-modal-events {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .modal-event {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    border-radius: 18px;
+    background: rgba(246, 234, 220, 0.8);
+  }
+
+  .modal-event.book-club-event {
+    background: #edd0db;
+    border-left: 6px solid #7f2748;
+  }
+
+  .modal-event h3 {
+    font-size: 1.1rem;
+  }
+
+  .modal-event h3 a {
+    text-decoration: none;
+  }
+
+  .modal-event h3 a:hover,
+  .modal-event h3 a:focus-visible {
+    color: var(--accent-strong);
+    text-decoration: underline;
+  }
+
+  .modal-book {
+    color: var(--accent-strong);
+    font-weight: 700;
+  }
+
+  .modal-description {
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 860px) {
+    .calendar-shell {
+      padding: 1rem;
+    }
+
+    .weekday-row,
+    .calendar-grid {
+      gap: 0.45rem;
+    }
+
+    .day-cell {
+      min-height: 5.75rem;
+      height: 5.75rem;
+      padding: 0.65rem;
+      grid-template-rows: auto 1fr;
+    }
+
+    .day-events {
+      display: none;
+    }
+
+    .day-cell header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      gap: 0.45rem;
+      min-height: 100%;
+    }
+
+    .mobile-event-dot {
+      display: inline-block;
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 999px;
+      background: var(--accent-strong);
+      box-shadow: 0 0 0 4px rgba(93, 56, 38, 0.12);
+      margin-top: 0.15rem;
+    }
+
+    .day-cell.has-events .mobile-event-dot {
+      background: #7f2748;
+      box-shadow: 0 0 0 4px rgba(127, 39, 72, 0.14);
+    }
+
+    .mobile-day-trigger {
+      display: block;
+      margin-top: auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: transparent;
+      box-shadow: none;
+      min-height: 0;
+      height: 0;
+      margin: 0;
+    }
+  }
+</style>

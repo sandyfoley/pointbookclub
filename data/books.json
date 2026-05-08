@@ -1,0 +1,104 @@
+[
+  {
+    "id": "book-frozen-river",
+    "title": "Frozen River",
+    "pickedBy": "Mary Jane",
+    "amazonUrl": "https://www.amazon.com/s?k=Frozen+River+book",
+    "bookClubMonthOrDate": "February 2025",
+    "isCurrent": false,
+    "coverImageUrl": ""
+  },
+  {
+    "id": "book-dictionary-of-lost-words",
+    "title": "Dictionary of Lost Words",
+    "pickedBy": "LeAnne",
+    "amazonUrl": "https://www.amazon.com/s?k=Dictionary+of+Lost+Words",
+    "bookClubMonthOrDate": "March 2025",
+    "isCurrent": false,
+    "coverImageUrl": ""
+  },
+    {
+    "id": "book-west-with-giraffes",
+    "title": "West with Giraffes",
+    "pickedBy": "Margaret",
+    "amazonUrl": "https://www.amazon.com/s?k=West+with+Giraffes",
+    "bookClubMonthOrDate": "April 2025",
+    "isCurrent": false,
+    "coverImageUrl": ""
+  },
+    {
+    "id": "book-left-to-tell",
+    "title": "Left to Tell",
+    "pickedBy": "Tracy",
+    "amazonUrl": "https://www.amazon.com/s?k=Left+to+Tell",
+    "bookClubMonthOrDate": "September 2025",
+    "isCurrent": false,
+    "coverImageUrl": ""
+  },
+  {
+    "id": "book-before-we-were-yours",
+    "title": "Before We Were Yours",
+    "pickedBy": "Pam",
+    "amazonUrl": "https://www.amazon.com/s?k=Before+We+Were+Yours",
+    "bookClubMonthOrDate": "October 2025",
+    "isCurrent": false,
+    "coverImageUrl": ""
+  },
+  {
+    "id": "book-finding-freedom",
+    "title": "Finding Freedom",
+    "pickedBy": "Jenny",
+    "amazonUrl": "https://www.amazon.com/s?k=Finding+Freedom+book",
+    "bookClubMonthOrDate": "December 2025",
+    "isCurrent": false,
+    "coverImageUrl": ""
+  },
+
+
+  {
+    "id": "book-snow-child",
+    "title": "Snow Child",
+    "pickedBy": "Sandy",
+    "amazonUrl": "https://www.amazon.com/s?k=Snow+Child+book",
+    "bookClubMonthOrDate": "January 2026",
+    "isCurrent": false,
+    "coverImageUrl": ""
+  },
+    {
+    "id": "book-the-correspondent",
+    "title": "The Correspondent",
+    "pickedBy": "Mary Jane",
+    "amazonUrl": "https://www.amazon.com/s?k=The+Correspondent+book",
+    "bookClubMonthOrDate": "February 2026",
+    "isCurrent": false,
+    "coverImageUrl": ""
+  },
+
+  {
+    "id": "book-the-art-thief",
+    "title": "The Art Thief",
+    "pickedBy": "Margaret",
+    "amazonUrl": "https://www.amazon.com/s?k=The+Art+Thief+book",
+    "bookClubMonthOrDate": "March 2026",
+    "isCurrent": false,
+    "coverImageUrl": ""
+  },
+  {
+    "id": "book-theo-of-golden",
+    "title": "Theo of Golden",
+    "pickedBy": "Tina",
+    "amazonUrl": "https://www.amazon.com/s?k=Theo+of+Golden",
+    "bookClubMonthOrDate": "May 2026",
+    "isCurrent": false,
+    "coverImageUrl": ""
+  },
+  {
+    "id": "book-book-woman-troublesome-creek",
+    "title": "The Book Woman of Troublesome Creek",
+    "pickedBy": "Becky",
+    "amazonUrl": "https://www.amazon.com/Book-Woman-Troublesome-Creek-Novel/dp/1492671525/ref=sr_1_1?crid=1Q92UA2NM685A&dib=eyJ2IjoiMSJ9.lRzRlkdfqLQNpPstNit-WP2bt-G2zbEbMX9hZ5P5nly0vZGjAbI11vwaG_TIv6dozFnsnH4jdZr3ZWILMLeXsYAGNgh1TezIsNUPs_aEBv4jhiwb9oQYT8ZNL5MKOjH9ax9rDDpp4ZgXU_l3lB15MLtRnRaUsU0Lvk_W6XBRy45K1ZCaKVR_xqigIxPD0xLVJDO3Lspl78-XXBXSSECfaZnl_YyXPvejO4r8mNEuQNc.J0jQzVzUTaXdQMeZPY5FFfKjSDKyH2-vtYpR-osr0T0&dib_tag=se&keywords=book+woman+of+troublesome+creek+by+kim+richardson&nsdOptOutParam=true&qid=1778092636&sprefix=book+woman+of%2Caps%2C177&sr=8-1",
+    "bookClubMonthOrDate": "June 2026",
+    "isCurrent": true,
+    "coverImageUrl": "https://m.media-amazon.com/images/I/916YmxOiYSL._SL1500_.jpg"
+  }
+]

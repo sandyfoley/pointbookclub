@@ -1,0 +1,76 @@
+[
+  {
+    "id": "evt-coffee-chat-2026-05",
+    "name": "Book Club Meeting",
+    "description": "Let's meet at Margaret's for Book club.",
+    "category": "Book Club meeting",
+    "date": "2026-03-26",
+    "startTime": "19:00",
+    "endTime": "",
+    "location": "Lakeisle",
+	"bookTitle": "The Art Thief",
+    "createdAt": "2026-05-01T10:00:00.000Z"
+  },
+  {
+    "id": "0c8b1a87-1e83-41bf-b2f9-1bb4d9f15269",
+    "createdAt": "2026-05-06T18:01:36.090Z",
+    "name": "Book Club Meeting",
+    "description": "Let's meet at Tina's house to review Theo of Golden",
+    "category": "Book Club meeting",
+    "date": "2026-05-05",
+    "startTime": "19:00",
+	"bookTitle": "Theo of Golden",
+    "location": "2531 Pine Run Drive (Tina)"
+  },
+  {
+    "id": "b685cf9d-9b54-47e7-b0f6-cb90facb9b0e",
+    "createdAt": "2026-05-06T18:47:09.122Z",
+    "name": "Hike at Pete's Woods",
+    "description": "Meet at Tina's at 3pm to hike Arcadia's Pete's Woods; led by Mary",
+    "category": "Social",
+    "date": "2026-05-06",
+    "startTime": "15:00",
+    "location": "Pete's Woods off Joyfield Rd."
+  },
+  {
+    "id": "20051ecf-5a88-4afd-a60b-6b7a003ce7e9",
+    "createdAt": "2026-05-06T18:48:57.104Z",
+    "name": "Devil Wears Prada movie night",
+    "description": "Watch Jenny and Margaret prepare for Part II and watch Devil Wears Prada movie night with them! :)",
+    "category": "Social",
+    "date": "2026-05-06",
+    "startTime": "19:30",
+    "location": "Margaret's house"
+  },
+  {
+    "id": "d718e7a0-df9b-4757-9423-99e0191417d1",
+    "createdAt": "2026-05-06T18:50:02.430Z",
+    "name": "Book Club Meeting",
+    "description": "Let's meet at Becky's!",
+    "category": "Book Club meeting",
+    "date": "2026-06-16",
+    "startTime": "19:00",
+	"bookTitle": "The Book Woman of Troublesome Creek",
+    "location": "9801 North Star Ln (Becky)"
+  },
+  {
+    "id": "beabd98a-4e71-49b4-ac8b-57614b9d302a",
+    "createdAt": "2026-05-06T18:51:35.588Z",
+    "name": "Vogue Theater - Honeymoon in Vegas",
+    "description": "Vogue Theater - Honeymoon in Vegas, organized by Margaret",
+    "category": "Social",
+    "date": "2026-05-11",
+    "startTime": "19:00",
+    "location": "meet at Vogue or carpool"
+  },
+  {
+    "id": "bbabd98a-4e71-49b4-ac8b-57614b9d302a",
+    "createdAt": "2026-05-06T18:51:35.588Z",
+    "name": "Hot Hormones & Cool Conversations",
+    "description": "Vogue Theater - Hot Hormones & Cool Conversations",
+    "category": "Social",
+    "date": "2026-05-07",
+    "startTime": "18:00",
+    "location": "Vogue"
+  }
+]

@@ -1,0 +1,190 @@
+---
+import type { BookRecord } from "@/lib/types";
+import { EVENT_CATEGORIES } from "@/lib/types";
+
+interface Props {
+  books: BookRecord[];
+}
+
+const { books } = Astro.props;
+const strippedBooks = books.map((book) => ({
+  value: book.title,
+  label: book.title.replace(/<[^>]+>/g, "").trim()
+}));
+---
+
+<section class="section" id="forms">
+  <div class="grid-two">
+    <form class="card form-card" method="POST" action="/api/events">
+      <div class="eyebrow">Add an event</div>
+      <h2>Share a calendar event</h2>
+      <div class="field-grid">
+        <label>
+          Event name
+          <input name="name" required />
+        </label>
+        <label>
+          Description
+          <textarea name="description" required></textarea>
+        </label>
+        <label>
+          Category
+          <select name="category" required data-event-category>
+            {EVENT_CATEGORIES.map((category) => <option value={category}>{category}</option>)}
+          </select>
+        </label>
+        <label class="book-title-field" data-book-title-field hidden>
+          Book title
+          <select name="bookTitle">
+            <option value="">Select a book title</option>
+            {strippedBooks.map((book) => (
+              <option value={book.value}>{book.label}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <div class="field-grid three">
+        <label>
+          Date
+          <input type="date" name="date" required />
+        </label>
+        <label>
+          Start time
+          <input type="time" name="startTime" required />
+        </label>
+        <label>
+          End time
+          <input type="time" name="endTime" />
+        </label>
+      </div>
+      <label>
+        Location
+        <input name="location" required />
+      </label>
+      <button class="button-primary" type="submit">Add event</button>
+    </form>
+
+    <form class="card form-card" method="POST" action="/api/books">
+      <div class="eyebrow">Book tracker</div>
+      <h2>Add a book club title</h2>
+      <div class="field-grid">
+        <label>
+          Title
+          <input name="title" required />
+        </label>
+        <label>
+          Member who picked the book
+          <input name="pickedBy" required />
+        </label>
+        <label>
+          Amazon URL
+          <input type="url" name="amazonUrl" required />
+        </label>
+        <label>
+          Book club month or date
+          <input name="bookClubMonthOrDate" required />
+        </label>
+      </div>
+      <label class="checkbox-row">
+        <input type="checkbox" name="isCurrent" />
+        Mark as the current selection
+      </label>
+      <button class="button-primary" type="submit">Add book</button>
+    </form>
+  </div>
+
+  <div class="grid-two forms-lower">
+    <form class="card form-card" method="POST" action="/api/member-signups">
+      <div class="eyebrow">Membership</div>
+      <h2>Join the club</h2>
+      <div class="field-grid">
+        <label>
+          Your name
+          <input name="memberName" required />
+        </label>
+        <label>
+          Email
+          <input type="email" name="email" required />
+        </label>
+        <label>
+          Notes
+          <textarea name="notes"></textarea>
+        </label>
+      </div>
+      <button class="button-primary" type="submit">Save interest</button>
+    </form>
+
+    <form class="card form-card" method="POST" action="/api/member-invites">
+      <div class="eyebrow">Invite a friend</div>
+      <h2>Invite another member</h2>
+      <div class="field-grid two">
+        <label>
+          Your name
+          <input name="inviterName" required />
+        </label>
+        <label>
+          Your email
+          <input type="email" name="inviterEmail" required />
+        </label>
+        <label>
+          Invitee name
+          <input name="inviteeName" required />
+        </label>
+        <label>
+          Invitee email
+          <input type="email" name="inviteeEmail" required />
+        </label>
+      </div>
+      <label>
+        Message
+        <textarea name="message"></textarea>
+      </label>
+      <button class="button-primary" type="submit">Save invite request</button>
+    </form>
+  </div>
+</section>
+
+<script>
+  const categorySelect = document.querySelector("[data-event-category]");
+  const bookTitleField = document.querySelector("[data-book-title-field]");
+  const bookTitleSelect = bookTitleField?.querySelector("select");
+
+  const syncBookTitleField = () => {
+    const show = categorySelect instanceof HTMLSelectElement
+      && categorySelect.value === "Book Club meeting";
+
+    if (!(bookTitleField instanceof HTMLElement) || !(bookTitleSelect instanceof HTMLSelectElement)) {
+      return;
+    }
+
+    bookTitleField.hidden = !show;
+    bookTitleSelect.disabled = !show;
+
+    if (!show) {
+      bookTitleSelect.value = "";
+    }
+  };
+
+  syncBookTitleField();
+  categorySelect?.addEventListener("change", syncBookTitleField);
+</script>
+
+<style>
+  .form-card {
+    display: grid;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .form-card h2 {
+    font-size: 2rem;
+  }
+
+  .forms-lower {
+    margin-top: 1.5rem;
+  }
+
+  .book-title-field[hidden] {
+    display: none;
+  }
+</style>

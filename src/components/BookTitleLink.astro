@@ -1,0 +1,44 @@
+---
+import type { BookRecord } from "@/lib/types";
+
+interface Props {
+  title: string;
+  books: BookRecord[];
+  className?: string;
+}
+
+const { title, books, className } = Astro.props;
+const normalizedTitle = title.replace(/<[^>]+>/g, "").trim();
+const matchingBook = books.find(
+  (book) => book.title.replace(/<[^>]+>/g, "").trim() === normalizedTitle
+);
+const href = matchingBook?.amazonUrl?.trim();
+---
+
+{
+  href ? (
+    <a class:list={["book-title-link", className]} href={href} target="_blank" rel="noreferrer">
+      {normalizedTitle}
+    </a>
+  ) : (
+    <span class:list={["book-title-link", "book-title-fallback", className]}>{normalizedTitle}</span>
+  )
+}
+
+<style>
+  .book-title-link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
+    text-decoration-thickness: 1.5px;
+  }
+
+  .book-title-link:hover,
+  .book-title-link:focus-visible {
+    color: var(--accent-strong);
+  }
+
+  .book-title-fallback {
+    cursor: default;
+  }
+</style>

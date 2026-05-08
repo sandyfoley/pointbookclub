@@ -1,0 +1,105 @@
+---
+import BookTitleLink from "@/components/BookTitleLink.astro";
+import { getBooks, getEvents } from "@/lib/storage";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { formatDisplayTime, formatEventDate } from "@/lib/format";
+
+const { id } = Astro.params;
+const events = await getEvents();
+const books = await getBooks();
+const event = events.find((item) => item.id === id);
+
+if (!event) {
+  return Astro.redirect("/events");
+}
+---
+
+<BaseLayout title={`${event.name} | Get to the Point Book Club`}>
+  <main class="container section">
+    <article class="event-detail card">
+      <div class="detail-head">
+        <div>
+          <div class="eyebrow">{event.category}</div>
+          <h1>{event.name}</h1>
+        </div>
+        <a class="button-link" href="/calendar">Back to calendar</a>
+      </div>
+
+      <p class="lead" set:html={event.description} />
+      {event.bookTitle && <p class="linked-book">Book: <BookTitleLink title={event.bookTitle} books={books} /></p>}
+
+      <dl class="detail-grid">
+        <div>
+          <dt>Date</dt>
+          <dd>{formatEventDate(event.date)}</dd>
+        </div>
+        <div>
+          <dt>Start time</dt>
+          <dd>{formatDisplayTime(event.startTime)}</dd>
+        </div>
+        <div>
+          <dt>End time</dt>
+          <dd>{event.endTime ? formatDisplayTime(event.endTime) : "Not specified"}</dd>
+        </div>
+        <div>
+          <dt>Location</dt>
+          <dd>{event.location}</dd>
+        </div>
+      </dl>
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  .event-detail {
+    padding: 1.75rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .detail-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .detail-head h1 {
+    margin-top: 0.75rem;
+    font-size: clamp(2.2rem, 4vw, 3.6rem);
+  }
+
+  .lead {
+    font-size: 1.12rem;
+  }
+
+  .linked-book {
+    margin-top: -0.5rem;
+    color: var(--accent-strong);
+    font-weight: 700;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 0;
+  }
+
+  .detail-grid div {
+    padding: 1rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.52);
+  }
+
+  dt {
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--muted);
+  }
+</style>

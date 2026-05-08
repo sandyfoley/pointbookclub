@@ -1,0 +1,32 @@
+{
+  "name": "get-to-the-point-book-club",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Astro book club calendar app with local runtime storage.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "keywords": [
+    "astro",
+    "calendar",
+    "book-club"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@astrojs/node": "^9.5.0",
+    "astro": "^5.16.0",
+    "date-fns": "^4.1.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@types/node": "^25.6.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,92 @@
+---
+import BookTitleLink from "@/components/BookTitleLink.astro";
+import type { BookRecord } from "@/lib/types";
+
+interface Props {
+  book: BookRecord | null;
+  books: BookRecord[];
+}
+
+const { book, books } = Astro.props;
+const fallbackCover =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='620' viewBox='0 0 420 620'%3E%3Crect width='420' height='620' rx='36' fill='%238c5a3c'/%3E%3Crect x='42' y='52' width='28' height='516' fill='%23d8c2ab' opacity='.6'/%3E%3Ctext x='210' y='250' font-family='Georgia' font-size='34' text-anchor='middle' fill='white'%3ECurrent Book%3C/text%3E%3Ctext x='210' y='300' font-family='Georgia' font-size='20' text-anchor='middle' fill='white' opacity='.85'%3EBook Club Pick%3C/text%3E%3C/svg%3E";
+const cover = book?.coverImageUrl?.trim() || fallbackCover;
+const plainTitle = book?.title.replace(/<[^>]+>/g, "").trim() ?? "Generic book";
+---
+
+<article class="book-card card">
+  <div class="book-cover">
+    <a href="" target="_blank"><img src={cover} alt={book ? `${plainTitle} cover` : "Generic book cover"} loading="lazy" /></a>
+  </div>
+  <div class="book-copy">
+    <div class="eyebrow">Current selection</div>
+    {
+      book ? (
+        <h2><BookTitleLink title={book.title} books={books} /></h2>
+      ) : (
+        <h2>No book selected yet</h2>
+      )
+    }
+    {
+      book ? (
+        <>
+          <p>Chosen by {book.pickedBy}</p>
+          <p>{book.bookClubMonthOrDate}</p>
+        </>
+      ) : (
+        <p>Add a book below to choose the current read.</p>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .book-card {
+    padding: 1.4rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.4rem;
+  }
+
+  .book-cover {
+    flex: 0 0 132px;
+    width: 132px;
+    align-self: flex-start;
+  }
+
+  .book-cover img {
+    width: 132px;
+    border-radius: 22px;
+    box-shadow: 0 18px 30px rgba(39, 25, 19, 0.2);
+  }
+
+  .book-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    text-align: left;
+    align-self: flex-start;
+  }
+
+  .book-copy h2 {
+    font-size: 2rem;
+  }
+
+  @media (max-width: 520px) {
+    .book-card {
+      flex-direction: column;
+    }
+
+    .book-cover {
+      width: 100%;
+      flex-basis: auto;
+    }
+
+    .book-cover img {
+      width: 132px;
+    }
+  }
+</style>

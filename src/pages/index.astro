@@ -1,0 +1,128 @@
+---
+import BookTitleLink from "@/components/BookTitleLink.astro";
+import CurrentBookCard from "@/components/CurrentBookCard.astro";
+import EventSummaryCard from "@/components/EventSummaryCard.astro";
+import FormsSection from "@/components/FormsSection.astro";
+import HeroShelf from "@/components/HeroShelf.astro";
+import UpcomingEventsList from "@/components/UpcomingEventsList.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildStatusMessage } from "@/lib/format";
+import { getBooks, getCurrentBook, getNextBookClubMeeting, getUpcomingEvents } from "@/lib/storage";
+
+const status = Astro.url.searchParams.get("status");
+const statusMessage = buildStatusMessage(status);
+const upcomingEvents = await getUpcomingEvents(5);
+const currentBook = await getCurrentBook();
+const nextMeeting = await getNextBookClubMeeting();
+const books = await getBooks();
+---
+
+<BaseLayout title="Get to the Point Book Club">
+  <main class="container section">
+    <HeroShelf />
+    {statusMessage && <div class="status-banner">{statusMessage}</div>}
+  </main>
+
+  <section class="container section overview-grid">
+    <div>
+      <div class="section-head">
+        <div class="eyebrow">Coming up</div>
+        <h2>The next few events</h2>
+      </div>
+      <UpcomingEventsList events={upcomingEvents} compact />
+      <div class="section-link" style="padding-top:30px">
+        <a class="button-link" href="/events">See all upcoming events</a>
+      </div>
+    </div>
+    <CurrentBookCard book={currentBook} books={books} />
+  </section>
+
+  <section class="container section">
+    <div class="grid-two home-detail-grid">
+      <EventSummaryCard event={nextMeeting} />
+      <article class="card library-card">
+        <div class="eyebrow">Reading library</div>
+        <h2>Books we have read</h2>
+        <ul>
+          {books.map((book) => (
+            <li class:list={[book.isCurrent && "current"]}>
+              <BookTitleLink title={book.title} books={books} />
+              <span>{book.bookClubMonthOrDate}</span>
+            </li>
+          ))}
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <div class="container">
+    <FormsSection books={books} />
+  </div>
+</BaseLayout>
+
+<style>
+  .overview-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .section-head,
+  .section-link {
+    margin-bottom: 1rem;
+  }
+
+  .section-head {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .section-head h2,
+  .library-card h2 {
+    font-size: clamp(2rem, 3vw, 3rem);
+  }
+
+  .library-card {
+    padding: 1.5rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .library-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .library-card li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.55);
+    color: var(--muted);
+  }
+
+  .library-card li.current {
+    color: var(--ink);
+    background: rgba(140, 90, 60, 0.14);
+  }
+
+  .home-detail-grid {
+    align-items: start;
+  }
+
+  .home-detail-grid :global(.event-summary) {
+    min-height: 50%;
+    align-self: start;
+  }
+
+  @media (min-width: 960px) {
+    .overview-grid {
+      grid-template-columns: 1.2fr 0.9fr;
+      align-items: start;
+    }
+  }
+</style>
