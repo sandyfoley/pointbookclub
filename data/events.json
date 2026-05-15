@@ -72,5 +72,15 @@
     "date": "2026-05-07",
     "startTime": "18:00",
     "location": "Vogue"
-  }
+  },
+	{
+    "id": "beabd98a-4e71-49b4-ac8b-57614b9d304e",
+    "createdAt": "2026-05-15T18:51:35.588Z",
+    "name": "Dinner & a Movie Night - TOW",
+    "description": "Dinner location will be picked after we get our group. Carpool. Leave the Point at 4:45pm. Movie at 7pm. Vogue Theater - TOW, organized by Sandy",
+    "category": "Social",
+    "date": "2026-05-26",
+    "startTime": "16:45",
+    "location": "Dinner (TBA) + Vogue Theatre"
+  },
 ]
