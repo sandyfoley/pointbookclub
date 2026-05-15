@@ -4,6 +4,7 @@ import path from "node:path";
 import type {
   BookRecord,
   EventRecord,
+  MemberRecord,
   MemberInviteRecord,
   MemberSignupRecord
 } from "@/lib/types";
@@ -13,6 +14,7 @@ const dataDir = path.resolve(process.cwd(), "data");
 const files = {
   books: path.join(dataDir, "books.json"),
   events: path.join(dataDir, "events.json"),
+  members: path.join(dataDir, "members.json"),
   memberSignups: path.join(dataDir, "memberSignups.json"),
   memberInvites: path.join(dataDir, "memberInvites.json")
 };
@@ -42,6 +44,15 @@ export async function getBooks() {
   return readJsonFile<BookRecord[]>(files.books);
 }
 
+export async function getMembers() {
+  const members = await readJsonFile<MemberRecord[]>(files.members);
+  return members.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export async function getActiveMembers() {
+  return (await getMembers()).filter((member) => member.active);
+}
+
 export async function getCurrentBook() {
   const books = await getBooks();
   return books.find((book) => book.isCurrent) ?? books[0] ?? null;
@@ -68,6 +79,8 @@ export async function createEvent(input: Omit<EventRecord, "id" | "createdAt">) 
     ...input,
     bookTitle:
       input.category === "Book Club meeting" && input.bookTitle ? input.bookTitle : undefined,
+    hostMemberId:
+      input.category === "Book Club meeting" && input.hostMemberId ? input.hostMemberId : undefined,
     endTime: input.endTime || undefined
   };
   events.push(record);
@@ -114,5 +127,53 @@ export async function createMemberInvite(input: Omit<MemberInviteRecord, "id" | 
   };
   invites.push(record);
   await writeJsonFile(files.memberInvites, invites);
+  await createInactiveMemberFromInvite(record);
+  return record;
+}
+
+export async function findMemberById(id?: string) {
+  if (!id) {
+    return null;
+  }
+
+  const members = await getMembers();
+  return members.find((member) => member.id === id) ?? null;
+}
+
+export async function createMember(input: Omit<MemberRecord, "id" | "createdAt">) {
+  const members = await getMembers();
+  const record: MemberRecord = {
+    id: randomUUID(),
+    createdAt: new Date().toISOString(),
+    ...input
+  };
+  members.push(record);
+  await writeJsonFile(files.members, members);
+  return record;
+}
+
+async function createInactiveMemberFromInvite(invite: Omit<MemberInviteRecord, "id" | "createdAt">) {
+  const members = await getMembers();
+  const email = invite.inviteeEmail.trim().toLowerCase();
+  const existing = members.find((member) => member.email.trim().toLowerCase() === email);
+
+  if (existing) {
+    return existing;
+  }
+
+  const record: MemberRecord = {
+    id: randomUUID(),
+    createdAt: new Date().toISOString(),
+    name: invite.inviteeName,
+    permissions: "Member",
+    active: false,
+    address: "",
+    email: invite.inviteeEmail,
+    spouse: "",
+    phone: ""
+  };
+
+  members.push(record);
+  await writeJsonFile(files.members, members);
   return record;
 }

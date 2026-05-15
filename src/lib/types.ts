@@ -15,6 +15,7 @@ export interface EventRecord {
   description: string;
   category: EventCategory;
   bookTitle?: string;
+  hostMemberId?: string;
   date: string;
   startTime: string;
   endTime?: string;
@@ -47,5 +48,21 @@ export interface MemberInviteRecord {
   inviteeName: string;
   inviteeEmail: string;
   message?: string;
+  createdAt: string;
+}
+
+export const MEMBER_PERMISSIONS = ["Admin", "Member"] as const;
+
+export type MemberPermission = (typeof MEMBER_PERMISSIONS)[number];
+
+export interface MemberRecord {
+  id: string;
+  name: string;
+  permissions: MemberPermission;
+  active: boolean;
+  address: string;
+  email: string;
+  spouse: string;
+  phone: string;
   createdAt: string;
 }

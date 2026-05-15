@@ -7,7 +7,7 @@ import HeroShelf from "@/components/HeroShelf.astro";
 import UpcomingEventsList from "@/components/UpcomingEventsList.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { buildStatusMessage } from "@/lib/format";
-import { getBooks, getCurrentBook, getNextBookClubMeeting, getUpcomingEvents } from "@/lib/storage";
+import { getActiveMembers, getBooks, getCurrentBook, getNextBookClubMeeting, getUpcomingEvents } from "@/lib/storage";
 
 const status = Astro.url.searchParams.get("status");
 const statusMessage = buildStatusMessage(status);
@@ -15,6 +15,8 @@ const upcomingEvents = await getUpcomingEvents(5);
 const currentBook = await getCurrentBook();
 const nextMeeting = await getNextBookClubMeeting();
 const books = await getBooks();
+const members = await getActiveMembers();
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="Get to the Point Book Club">
@@ -31,7 +33,7 @@ const books = await getBooks();
       </div>
       <UpcomingEventsList events={upcomingEvents} compact />
       <div class="section-link" style="padding-top:30px">
-        <a class="button-link" href="/events">See all upcoming events</a>
+        <a class="button-link" href={`${base}events`}>See all upcoming events</a>
       </div>
     </div>
     <CurrentBookCard book={currentBook} books={books} />
@@ -56,7 +58,7 @@ const books = await getBooks();
   </section>
 
   <div class="container">
-    <FormsSection books={books} />
+    <FormsSection books={books} members={members} />
   </div>
 </BaseLayout>
 

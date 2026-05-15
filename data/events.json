@@ -8,7 +8,8 @@
     "startTime": "19:00",
     "endTime": "",
     "location": "Lakeisle",
-	"bookTitle": "The Art Thief",
+    "bookTitle": "The Art Thief",
+    "hostMemberId": "member-margaret",
     "createdAt": "2026-05-01T10:00:00.000Z"
   },
   {
@@ -19,7 +20,8 @@
     "category": "Book Club meeting",
     "date": "2026-05-05",
     "startTime": "19:00",
-	"bookTitle": "Theo of Golden",
+    "bookTitle": "Theo of Golden",
+    "hostMemberId": "member-tina",
     "location": "2531 Pine Run Drive (Tina)"
   },
   {
@@ -50,7 +52,8 @@
     "category": "Book Club meeting",
     "date": "2026-06-16",
     "startTime": "19:00",
-	"bookTitle": "The Book Woman of Troublesome Creek",
+    "bookTitle": "The Book Woman of Troublesome Creek",
+    "hostMemberId": "member-becky",
     "location": "9801 North Star Ln (Becky)"
   },
   {

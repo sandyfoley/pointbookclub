@@ -1,6 +1,6 @@
 ---
 import BookTitleLink from "@/components/BookTitleLink.astro";
-import { getBooks } from "@/lib/storage";
+import { getBooks, getMembers } from "@/lib/storage";
 import { formatDisplayTime, formatEventDate } from "@/lib/format";
 import type { EventRecord } from "@/lib/types";
 
@@ -10,6 +10,8 @@ interface Props {
 
 const { event } = Astro.props;
 const books = await getBooks();
+const members = await getMembers();
+const host = members.find((member) => member.id === event?.hostMemberId) ?? null;
 ---
 
 <article class="event-summary card">
@@ -19,6 +21,7 @@ const books = await getBooks();
       <>
         <h2>{event.name}</h2>
         {event.bookTitle && <p class="linked-book">Book: <BookTitleLink title={event.bookTitle} books={books} /></p>}
+        {host && <p class="linked-book">Host: {host.name}</p>}
         <p set:html={event.description} />
         <dl>
           <div>

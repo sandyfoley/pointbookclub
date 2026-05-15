@@ -1,23 +1,29 @@
 ---
-import type { BookRecord } from "@/lib/types";
+import type { BookRecord, MemberRecord } from "@/lib/types";
 import { EVENT_CATEGORIES } from "@/lib/types";
 
 interface Props {
   books: BookRecord[];
+  members: MemberRecord[];
 }
 
-const { books } = Astro.props;
+const { books, members } = Astro.props;
 const strippedBooks = books.map((book) => ({
   value: book.title,
   label: book.title.replace(/<[^>]+>/g, "").trim()
 }));
+const remoteEndpointBase = (import.meta.env.PUBLIC_FORM_ENDPOINT_BASE || "").replace(/\/$/, "");
+const makeAction = (localPath: string) =>
+  remoteEndpointBase ? `${remoteEndpointBase}/api/book-club-submit` : localPath;
 ---
 
 <section class="section" id="forms">
   <div class="grid-two">
-    <form class="card form-card" method="POST" action="/api/events">
-      <div class="eyebrow">COMING SOON</div>
-      <h2>Send a message to Sandy to get an event or invite another person!</h2>
+    <form class="card form-card" method="POST" action={makeAction("/api/book-club-submit")}>
+      <input type="hidden" name="formType" value="event" />
+      <input class="trap-field" type="text" name="companyName" tabindex="-1" autocomplete="off" />
+      <div class="eyebrow">Add an event</div>
+      <h2>Share a calendar event</h2>
       <div class="field-grid">
         <label>
           Event name
@@ -39,6 +45,15 @@ const strippedBooks = books.map((book) => ({
             <option value="">Select a book title</option>
             {strippedBooks.map((book) => (
               <option value={book.value}>{book.label}</option>
+            ))}
+          </select>
+        </label>
+        <label class="host-member-field" data-host-member-field hidden>
+          Host
+          <select name="hostMemberId">
+            <option value="">Select a host member</option>
+            {members.map((member) => (
+              <option value={member.id}>{member.name}</option>
             ))}
           </select>
         </label>
@@ -64,7 +79,9 @@ const strippedBooks = books.map((book) => ({
       <button class="button-primary" type="submit">Add event</button>
     </form>
 
-    <form class="card form-card" method="POST" action="/api/books">
+    <form class="card form-card" method="POST" action={makeAction("/api/book-club-submit")}>
+      <input type="hidden" name="formType" value="book" />
+      <input class="trap-field" type="text" name="libraryName" tabindex="-1" autocomplete="off" />
       <div class="eyebrow">Book tracker</div>
       <h2>Add a book club title</h2>
       <div class="field-grid">
@@ -94,7 +111,9 @@ const strippedBooks = books.map((book) => ({
   </div>
 
   <div class="grid-two forms-lower">
-    <form class="card form-card" method="POST" action="/api/member-signups">
+    <form class="card form-card" method="POST" action={makeAction("/api/book-club-submit")}>
+      <input type="hidden" name="formType" value="signup" />
+      <input class="trap-field" type="text" name="clubHandle" tabindex="-1" autocomplete="off" />
       <div class="eyebrow">Membership</div>
       <h2>Join the club</h2>
       <div class="field-grid">
@@ -114,7 +133,9 @@ const strippedBooks = books.map((book) => ({
       <button class="button-primary" type="submit">Save interest</button>
     </form>
 
-    <form class="card form-card" method="POST" action="/api/member-invites">
+    <form class="card form-card" method="POST" action={makeAction("/api/book-club-submit")}>
+      <input type="hidden" name="formType" value="invite" />
+      <input class="trap-field" type="text" name="referralCode" tabindex="-1" autocomplete="off" />
       <div class="eyebrow">Invite a friend</div>
       <h2>Invite another member</h2>
       <div class="field-grid two">
@@ -148,20 +169,31 @@ const strippedBooks = books.map((book) => ({
   const categorySelect = document.querySelector("[data-event-category]");
   const bookTitleField = document.querySelector("[data-book-title-field]");
   const bookTitleSelect = bookTitleField?.querySelector("select");
+  const hostMemberField = document.querySelector("[data-host-member-field]");
+  const hostMemberSelect = hostMemberField?.querySelector("select");
 
   const syncBookTitleField = () => {
     const show = categorySelect instanceof HTMLSelectElement
       && categorySelect.value === "Book Club meeting";
 
-    if (!(bookTitleField instanceof HTMLElement) || !(bookTitleSelect instanceof HTMLSelectElement)) {
+    if (
+      !(bookTitleField instanceof HTMLElement)
+      || !(bookTitleSelect instanceof HTMLSelectElement)
+      || !(hostMemberField instanceof HTMLElement)
+      || !(hostMemberSelect instanceof HTMLSelectElement)
+    ) {
       return;
     }
 
     bookTitleField.hidden = !show;
     bookTitleSelect.disabled = !show;
+    hostMemberField.hidden = !show;
+    hostMemberSelect.disabled = !show;
+    hostMemberSelect.required = show;
 
     if (!show) {
       bookTitleSelect.value = "";
+      hostMemberSelect.value = "";
     }
   };
 
@@ -186,5 +218,18 @@ const strippedBooks = books.map((book) => ({
 
   .book-title-field[hidden] {
     display: none;
+  }
+
+  .host-member-field[hidden] {
+    display: none;
+  }
+
+  .trap-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
   }
 </style>

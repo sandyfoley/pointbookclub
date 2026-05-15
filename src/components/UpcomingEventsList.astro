@@ -1,6 +1,6 @@
 ---
 import BookTitleLink from "@/components/BookTitleLink.astro";
-import { getBooks } from "@/lib/storage";
+import { getBooks, getMembers } from "@/lib/storage";
 import { formatDisplayTime, formatEventDate } from "@/lib/format";
 import type { EventRecord } from "@/lib/types";
 
@@ -11,6 +11,8 @@ interface Props {
 
 const { events, compact = false } = Astro.props;
 const books = await getBooks();
+const members = await getMembers();
+const base = import.meta.env.BASE_URL;
 ---
 
 <div class:list={["events-list", compact && "compact"]}>
@@ -21,12 +23,13 @@ const books = await getBooks();
           {event.category}
         </span>
         <h3>
-          <a class="event-link" href={`/pointbookclub/events/${event.id}`}>{event.name}</a>
+          <a class="event-link" href={`${base}events/${event.id}`}>{event.name}</a>
         </h3>
       </div>
       <p>{event.location}</p>
       <p>{formatEventDate(event.date)}</p>
       <p>{formatDisplayTime(event.startTime)}</p>
+      {event.hostMemberId && <p>Host: {members.find((member) => member.id === event.hostMemberId)?.name || "Unknown"}</p>}
       {event.bookTitle && <p class="event-book">Book: <BookTitleLink title={event.bookTitle} books={books} /></p>}
       {!compact && <p set:html={event.description} />}
     </article>

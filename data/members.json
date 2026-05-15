@@ -1,0 +1,57 @@
+[
+  {
+    "id": "member-becky",
+    "name": "Becky Scott",
+    "permissions": "Member",
+    "active": true,
+    "address": "",
+    "email": "becky@example.com",
+    "spouse": "",
+    "phone": "",
+    "createdAt": "2026-05-08T12:00:00.000Z"
+  },
+  {
+    "id": "member-margaret",
+    "name": "Margaret White",
+    "permissions": "Member",
+    "active": true,
+    "address": "",
+    "email": "margaret@example.com",
+    "spouse": "",
+    "phone": "",
+    "createdAt": "2026-05-08T12:00:00.000Z"
+  },
+  {
+    "id": "member-mary-jane",
+    "name": "Mary Jane Rumler",
+    "permissions": "Member",
+    "active": true,
+    "address": "",
+    "email": "maryjane@example.com",
+    "spouse": "",
+    "phone": "",
+    "createdAt": "2026-05-08T12:00:00.000Z"
+  },
+  {
+    "id": "member-sandy",
+    "name": "Sandy Foley",
+    "permissions": "Admin",
+    "active": true,
+    "address": "",
+    "email": "sandyfoley@yahoo.com",
+    "spouse": "",
+    "phone": "",
+    "createdAt": "2026-05-08T12:00:00.000Z"
+  },
+  {
+    "id": "member-tina",
+    "name": "Tina Hughes",
+    "permissions": "Member",
+    "active": true,
+    "address": "",
+    "email": "tina@example.com",
+    "spouse": "",
+    "phone": "",
+    "createdAt": "2026-05-08T12:00:00.000Z"
+  }
+]

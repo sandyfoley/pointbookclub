@@ -11,6 +11,7 @@ const cells = buildCalendarMonth(selectedMonth, events);
 const monthLabel = getMonthLabel(selectedMonth);
 const prevMonth = getAdjacentMonth(selectedMonth, -1).toISOString().slice(0, 7);
 const nextMonth = getAdjacentMonth(selectedMonth, 1).toISOString().slice(0, 7);
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="Calendar | Get to the Point Book Club">
@@ -22,9 +23,9 @@ const nextMonth = getAdjacentMonth(selectedMonth, 1).toISOString().slice(0, 7);
           <h1>{monthLabel}</h1>
         </div>
         <div class="month-nav">
-          <a class="button-link" href={`/calendar?month=${prevMonth}`}>Previous</a>
-          <a class="button-link" href="/calendar">Today</a>
-          <a class="button-link button-primary" href={`/calendar?month=${nextMonth}`}>Next</a>
+          <a class="button-link" href={`${base}calendar?month=${prevMonth}`}>Previous</a>
+          <a class="button-link" href={`${base}calendar`}>Today</a>
+          <a class="button-link button-primary" href={`${base}calendar?month=${nextMonth}`}>Next</a>
         </div>
       </div>
 
@@ -53,7 +54,7 @@ const nextMonth = getAdjacentMonth(selectedMonth, 1).toISOString().slice(0, 7);
               {cell.events.map((event) => (
                 <a
                   class:list={["day-event", event.category === "Book Club meeting" && "book-club-event"]}
-                  href={`/events/${event.id}`}
+                  href={`${base}events/${event.id}`}
                 >
                   <strong>{event.name}</strong>
                   <span>{formatDisplayTime(event.startTime)}</span>
@@ -100,7 +101,7 @@ const nextMonth = getAdjacentMonth(selectedMonth, 1).toISOString().slice(0, 7);
 
     return `
       <article class="modal-event${roseClass}">
-        <h3><a href="/events/${event.id}">${event.name}</a></h3>
+        <h3><a href="${base}events/${event.id}">${event.name}</a></h3>
         <p>${event.location}</p>
         <p>${timeLine}</p>
         ${bookLine}

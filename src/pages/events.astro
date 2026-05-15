@@ -4,6 +4,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getUpcomingEvents } from "@/lib/storage";
 
 const events = await getUpcomingEvents();
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="Upcoming Events | Get to the Point Book Club">
@@ -16,6 +17,7 @@ const events = await getUpcomingEvents();
       </p>
     </div>
     <UpcomingEventsList events={events} />
+    <p><a class="button-link" href={`${base}calendar`}>Back to calendar</a></p>
   </main>
 </BaseLayout>
 

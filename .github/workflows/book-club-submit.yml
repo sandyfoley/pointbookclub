@@ -1,0 +1,52 @@
+name: Process Book Club Submission
+
+on:
+  repository_dispatch:
+    types: [book_club_submit]
+  workflow_dispatch:
+    inputs:
+      formType:
+        required: true
+        type: choice
+        options:
+          - event
+          - book
+          - signup
+          - invite
+      payload:
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: book-club-submit
+  cancel-in-progress: false
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Process submission payload
+        env:
+          DISPATCH_PAYLOAD: ${{ github.event_name == 'repository_dispatch' && toJson(github.event.client_payload) || format('{{"formType":"{0}","data":{1}}}', inputs.formType, inputs.payload) }}
+          DISPATCH_SHARED_SECRET: ${{ secrets.BOOK_CLUB_SHARED_SECRET }}
+        run: node scripts/process-dispatch.mjs
+
+      - name: Commit updated JSON
+        run: |
+          git config user.name "book-club-bot"
+          git config user.email "book-club-bot@users.noreply.github.com"
+          git add data/books.json data/events.json data/memberInvites.json data/memberSignups.json data/members.json
+          git diff --cached --quiet || git commit -m "Process book club submission"
+          git push
